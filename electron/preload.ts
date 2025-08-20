@@ -22,3 +22,10 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   // You can expose other APTs you need here.
   // ...
 })
+
+// Expose specific APIs for the photo processing app
+contextBridge.exposeInMainWorld('electronAPI', {
+  selectFolder: () => ipcRenderer.invoke('select-folder'),
+  discoverPhotos: (folderPath: string) => ipcRenderer.invoke('discover-photos', folderPath),
+  readFileBuffer: (filePath: string) => ipcRenderer.invoke('read-file-buffer', filePath)
+})

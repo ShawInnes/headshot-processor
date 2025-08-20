@@ -20,3 +20,8 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
   // You can expose other APTs you need here.
   // ...
 });
+electron.contextBridge.exposeInMainWorld("electronAPI", {
+  selectFolder: () => electron.ipcRenderer.invoke("select-folder"),
+  discoverPhotos: (folderPath) => electron.ipcRenderer.invoke("discover-photos", folderPath),
+  readFileBuffer: (filePath) => electron.ipcRenderer.invoke("read-file-buffer", filePath)
+});

@@ -1,9 +1,9 @@
-import { app, BrowserWindow } from 'electron'
-import { createRequire } from 'node:module'
+import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import fs from 'node:fs/promises'
+import { glob } from 'glob'
 
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // The built directory structure
@@ -66,3 +66,72 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(createWindow)
+
+// IPC handlers for file operations
+ipcMain.handle('select-folder', async () => {
+  const result = await dialog.showOpenDialog(win!, {
+    properties: ['openDirectory'],
+    title: 'Select folder containing photos'
+  })
+
+  if (result.canceled || result.filePaths.length === 0) {
+    return null
+  }
+
+  return result.filePaths[0]
+})
+
+ipcMain.handle('discover-photos', async (_, folderPath: string) => {
+  try {
+    // Find all JPEG files in the selected folder
+    const jpegPatterns = ['**/*.jpg', '**/*.jpeg', '**/*.JPG', '**/*.JPEG']
+    const files: string[] = []
+
+    for (const pattern of jpegPatterns) {
+      const foundFiles = await glob(pattern, {
+        cwd: folderPath,
+        absolute: true,
+        nodir: true
+      })
+      files.push(...foundFiles)
+    }
+
+    // Remove duplicates and sort
+    const uniqueFiles = [...new Set(files)].sort()
+
+    // Get file stats for each file
+    const fileInfos = await Promise.all(
+      uniqueFiles.map(async (filePath) => {
+        try {
+          const stats = await fs.stat(filePath)
+          return {
+            path: filePath,
+            name: path.basename(filePath),
+            size: stats.size,
+            modified: stats.mtime.toISOString(),
+            directory: path.dirname(filePath)
+          }
+        } catch (error) {
+          console.error(`Error reading file stats for ${filePath}:`, error)
+          return null
+        }
+      })
+    )
+
+    // Filter out any null results from failed stat operations
+    return fileInfos.filter(info => info !== null)
+  } catch (error) {
+    console.error('Error discovering photos:', error)
+    throw error
+  }
+})
+
+ipcMain.handle('read-file-buffer', async (_, filePath: string) => {
+  try {
+    const buffer = await fs.readFile(filePath)
+    return buffer
+  } catch (error) {
+    console.error(`Error reading file ${filePath}:`, error)
+    throw error
+  }
+})
