@@ -51,6 +51,7 @@ export function PhotoList({ photos, onPhotoSelect }: PhotoListProps) {
           for (let i = 0; i < buffer.length; i++) {
             view[i] = buffer[i]
           }
+
           // Extract EXIF data
           exifData = await readExifData(arrayBuffer)
         } catch (err) {

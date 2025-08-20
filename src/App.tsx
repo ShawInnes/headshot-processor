@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FolderSelector } from './components/FolderSelector'
 import { PhotoList } from './components/PhotoList'
 import { PhotoDetailDialog } from './components/PhotoDetailDialog'
+import { Button } from './components/ui/button'
 import { PhotoFile } from './types/electron'
 import { PhotoWithExif } from './lib/exif'
 import { toast } from 'sonner'
@@ -75,15 +76,16 @@ function App() {
                     {selectedFolder}
                   </p>
                 </div>
-                <button
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setPhotos([])
                     setSelectedFolder(null)
                   }}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                 >
                   Change Folder
-                </button>
+                </Button>
               </div>
             </div>
 
