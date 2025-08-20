@@ -30,7 +30,6 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
     if (!photo) return null
 
     const exif = photo.exif
-    console.log(exif)
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -214,25 +213,6 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                         )}
                                     </CardContent>
                                 </Card>
-
-                                {/* All EXIF Data */}
-                                {exif._raw && (
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle className="text-base">All Metadata</CardTitle>
-                                            <CardDescription>
-                                                Complete EXIF data (for debugging)
-                                            </CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <ScrollArea className="h-32 w-full rounded border p-2">
-                        <pre className="text-xs">
-                          {JSON.stringify(exif._raw, null, 2)}
-                        </pre>
-                                            </ScrollArea>
-                                        </CardContent>
-                                    </Card>
-                                )}
                             </>
                         ) : (
                             <Card>

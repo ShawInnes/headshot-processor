@@ -22,12 +22,12 @@ export interface PhotoWithExif {
     size: number
     modified: string
     directory: string
-    exif: ExifData | null
+    exif: ExifData | null | undefined
     hasError: boolean
     errorMessage?: string
 }
 
-export async function readExifData(buffer: ArrayBuffer): Promise<ExifData | null> {
+export async function readExifData(buffer: ArrayBuffer): Promise<ExifData | null | undefined> {
     try {
         const exifData = await exifr.parse(buffer, {
             // Parse all available EXIF data
@@ -37,12 +37,12 @@ export async function readExifData(buffer: ArrayBuffer): Promise<ExifData | null
             interop: true,
             ifd1: true,
             // Include maker notes which might contain employee information
-            makerNote: true,
+            makerNote: false,
             userComment: true,
             // Parse XMP data which might contain custom metadata
-            xmp: true,
+            xmp: false,
             // Parse IPTC data which might contain keywords or descriptions
-            iptc: true
+            iptc: false
         })
 
         if (!exifData) {
@@ -63,22 +63,27 @@ export async function readExifData(buffer: ArrayBuffer): Promise<ExifData | null
             resolutionUnit: exifData.ResolutionUnit
         }
 
-        // Look for employee name in various possible fields
-        const possibleEmployeeFields = [
-            'UserComment',
-        ]
-
-        for (const field of possibleEmployeeFields) {
-            if (exifData[field] && typeof exifData[field] === 'string' && exifData[field].trim()) {
-                result.employeeName = exifData[field].trim()
-                break
+        // Look for employee name in userComment field
+        if (exifData.userComment) {
+            let userCommentText = ''
+            if (exifData.userComment instanceof Uint8Array) {
+                // Convert Uint8Array to string, handling ASCII encoding prefix
+                const decoder = new TextDecoder('utf-8')
+                userCommentText = decoder.decode(exifData.userComment)
+            } else if (typeof exifData.userComment === 'string') {
+                userCommentText = exifData.userComment
             }
+
+            // Extract employee name if it follows the pattern "Employee Name: [name]"
+            const employeeMatch = userCommentText.match(/Employee Name:\s*(.+)/i)
+            if (employeeMatch) {
+                result.employeeName = employeeMatch[1].trim()
+            }
+
+            result.userComment = userCommentText
         }
 
-        // Store all raw EXIF data for debugging purposes
-        result._raw = exifData
-
-        return result
+        return result;
     } catch (error) {
         console.error('Error reading EXIF data:', error)
         return null
