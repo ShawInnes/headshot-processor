@@ -33,7 +33,7 @@ export async function readExifData(buffer: ArrayBuffer): Promise<ExifData | null
             // Parse all available EXIF data
             tiff: true,
             exif: true,
-            gps: true,
+            gps: false,
             interop: true,
             ifd1: true,
             // Include maker notes which might contain employee information
