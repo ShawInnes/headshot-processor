@@ -1,4 +1,4 @@
-# Headshot photo processing tool
+# Headshot Photo Processing Tool
 
 This tool is to help process full of headshot's that have been taken.
 
@@ -103,82 +103,148 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 - [ ] Add email delivery status tracking
 - [ ] Handle email sending errors and retries
 
+### 10. **Data Persistence & Project Management** 🚧 IN PROGRESS
+
+- [x] **JSON-based folder indexing system**
+    - [x] Create structured JSON schema for storing folder data
+    - [x] Store complete file paths, EXIF metadata, and timestamps
+    - [x] Implement atomic write operations to prevent data corruption
+    - [ ] Add data validation and schema versioning
+- [ ] **Incremental scanning and cache management**
+    - [x] Compare file modification timestamps to detect changes
+    - [ ] Add/update/remove files from cache automatically
+    - [ ] Implement efficient file system watching for real-time updates
+    - [ ] Handle renamed/moved files with intelligent path resolution
+- [x] **Project save/load functionality**
+    - [x] Create project files (.hpt - Headshot Processing Tool format)
+    - [x] Save/restore complete application state including selections
+    - [x] Implement recent projects list with quick access
+    - [ ] Add project templates for different workflow types
+- [x] **Cross-platform file path handling**
+    - [x] Normalize file paths for different operating systems
+    - [ ] Handle network drives and external storage devices
+    - [x] Implement portable path resolution for project sharing
+    - [x] Add file integrity checking (checksums/hashes)
+- [ ] **Data export/import capabilities**
+    - [ ] Export metadata to CSV/Excel for external processing
+    - [ ] Import employee data from external sources
+    - [ ] Backup/restore application data and settings
+    - [ ] Support for data migration between application versions
+
 ## User Interface Components
 
-### 10. **Main Application Layout**
+### 11. **Main Application Layout**
 
 - [ ] Create main window layout with navigation
 - [ ] Implement responsive design with Shadcn components
 - [ ] Add application menu and toolbar
 - [ ] Create status bar with progress indicators
+- [ ] **Add project management UI**
+  - [ ] Recent projects sidebar/dropdown
+  - [ ] Project save/load dialogs with metadata preview
+  - [ ] Cache status indicators and refresh controls
+  - [ ] Data integrity warnings and repair options
 
-### 11. **Settings and Configuration**
+### 12. **Settings and Configuration**
 
 - [ ] Create settings panel for API configuration
 - [ ] Add email server configuration interface
 - [ ] Implement export/import settings functionality
 - [ ] Add application preferences (themes, default folders, etc.)
+- [ ] **Add data persistence settings**
+    - [ ] Configure auto-save intervals for indexed data
+    - [ ] Set default project save locations
+    - [ ] Manage cache storage limits and cleanup policies
+    - [ ] Configure backup and recovery options
 
-### 12. **Progress and Feedback**
+### 13. **Progress and Feedback**
 
 - [ ] Implement progress bars for long operations
 - [ ] Add toast notifications using Shadcn Toast
 - [ ] Create detailed operation logs
 - [ ] Add confirmation dialogs for destructive operations
+- [ ] **Add persistence operation feedback**
+  - [ ] Show cache building/updating progress
+  - [ ] Display project save/load status
+  - [ ] Notify users of data sync issues or conflicts
+  - [ ] Add background task indicators for incremental updates
 
 ## Quality Assurance & Polish
 
-### 13. **Error Handling & Validation**
+### 14. **Error Handling & Validation**
 
 - [ ] Implement comprehensive error handling
 - [ ] Add input validation for all forms
 - [ ] Create user-friendly error messages
 - [ ] Add fallback mechanisms for failed operations
+- [ ] **Add data persistence error handling**
+  - [ ] Handle corrupted cache files with automatic repair
+  - [ ] Implement fallback when JSON files are inaccessible
+  - [ ] Add file system permission error handling
+  - [ ] Create data recovery mechanisms for critical failures
 
-### 14. **Performance Optimization**
+### 15. **Performance Optimization**
 
 - [ ] Implement lazy loading for large photo sets
 - [ ] Add photo thumbnail caching
 - [ ] Optimize EXIF data reading for large batches
 - [ ] Implement background processing for heavy operations
+- [ ] **Optimize data persistence performance**
+  - [ ] Implement efficient JSON streaming for large datasets
+  - [ ] Add compression for large metadata caches
+  - [ ] Use worker threads for background cache operations
+  - [ ] Implement smart caching strategies to minimize disk I/O
 
-### 15. **Testing**
+### 16. **Testing**
 
 - [ ] Write unit tests for core functionality
 - [ ] Implement integration tests for file operations
 - [ ] Add end-to-end testing for main workflows
 - [ ] Test cross-platform compatibility (Windows, macOS, Linux)
+- [ ] **Add persistence system testing**
+  - [ ] Test data integrity across application restarts
+  - [ ] Validate incremental update accuracy
+  - [ ] Test project file compatibility across versions
+  - [ ] Stress test with large datasets and file collections
 
-### 16. **Documentation & Help**
+### 17. **Documentation & Help**
 
 - [ ] Create user manual/help documentation
 - [ ] Add tooltips and contextual help
 - [ ] Implement onboarding flow for new users
 - [ ] Create troubleshooting guide
+- [ ] **Document data persistence features**
+  - [ ] Explain project file formats and structure
+  - [ ] Document cache management and maintenance
+  - [ ] Create backup and recovery procedures
+  - [ ] Add data migration guides for version updates
 
 ## Deployment & Distribution
 
-### 17. **Build & Package**
+### 18. **Build & Package**
 
 - [ ] Configure Electron builder for all platforms
 - [ ] Set up code signing for security
 - [ ] Create installer packages
 - [ ] Set up auto-updater functionality
+- [ ] **Include data migration tools**
+  - [ ] Bundle data format converters for version updates
+  - [ ] Include cache repair utilities in distribution
+  - [ ] Add project file validators for troubleshooting
 
-### 18. **Final Polish**
+### 19. **Final Polish**
 
 - [ ] Add application icons and branding
 - [ ] Implement keyboard shortcuts
 - [ ] Add drag-and-drop functionality
 - [ ] Final UI/UX review and improvements
 
-## Priority Recommendations
-
 ## 🎯 CURRENT DEVELOPMENT STATUS
 
 ### ✅ STAGE 1-3 COMPLETED:
 
 **Project Foundation:**
+
 - [x] Electron + React + TypeScript project structure
 - [x] Vite build configuration optimized for Electron
 - [x] Shadcn/ui component library fully integrated
@@ -186,6 +252,7 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 - [x] ESLint and Prettier configuration
 
 **Core Dependencies Installed:**
+
 - [x] EXIF data reading (`exifr` library)
 - [x] File system utilities (Node.js built-in + glob)
 - [x] HTTP client (`axios`) ready for API integration
@@ -193,26 +260,28 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 - [x] Cross-platform path utilities
 
 **Implemented Features:**
+
 1. **Folder Selection & File Discovery** ✅ FULLY COMPLETED
-   - Native Electron dialog for folder selection
-   - Recursive JPEG enumeration with glob patterns
-   - File validation (.jpg, .jpeg extensions)
-   - Responsive file listing with Shadcn Table component
-   - Real-time loading states and progress indicators
+    - Native Electron dialog for folder selection
+    - Recursive JPEG enumeration with glob patterns
+    - File validation (.jpg, .jpeg extensions)
+    - Responsive file listing with Shadcn Table component
+    - Real-time loading states and progress indicators
 
 2. **EXIF Data Extraction & Display** ✅ FULLY COMPLETED
-   - Comprehensive EXIF metadata reader
-   - Multi-field employee name detection (Artist, Copyright, Keywords, etc.)
-   - Detailed metadata display with error handling
-   - Graceful handling of corrupted/missing EXIF data
+    - Comprehensive EXIF metadata reader
+    - Multi-field employee name detection (Artist, Copyright, Keywords, etc.)
+    - Detailed metadata display with error handling
+    - Graceful handling of corrupted/missing EXIF data
 
 3. **Photo Management Interface** ✅ CORE COMPLETED
-   - Responsive photo thumbnail gallery
-   - Modal photo preview with full metadata
-   - Employee grouping and statistics
-   - Modern UI with Shadcn components (Cards, Dialogs, Progress bars)
+    - Responsive photo thumbnail gallery
+    - Modal photo preview with full metadata
+    - Employee grouping and statistics
+    - Modern UI with Shadcn components (Cards, Dialogs, Progress bars)
 
 **Technical Architecture:**
+
 - [x] IPC communication between main and renderer processes
 - [x] TypeScript definitions for all components and data structures
 - [x] Comprehensive error handling and validation
@@ -221,26 +290,121 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 
 **Employee Detection System:**
 The application intelligently searches for employee names across these EXIF fields:
+
 - Standard fields: Artist, Copyright, ImageDescription, UserComment
 - Windows fields: XPSubject, XPComment, XPAuthor, XPKeywords
 - IPTC fields: Keywords, Subject, PersonInImage, RegionPersonDisplayName
 - XMP metadata fields for comprehensive coverage
 
 ### 🚀 NEXT PRIORITY PHASES:
+
 **Phase 1 (Current Focus):**
+
+- **Task 10: Data Persistence & Project Management** (NEW PRIORITY)
+    - JSON-based storage system for indexed folders
+    - Incremental file scanning and cache updates
+    - Project save/load functionality
 - Task 6: File Renaming System implementation
 - Task 7: Advanced Employee Management features
 - Enhanced photo selection/deselection functionality
 
 **Phase 2 (Core Features):**
+
 - Task 8: API Integration for Email Lookup
 - Task 9: Email Functionality with SMTP configuration
 - Advanced search and filtering capabilities
 
 **Phase 3 (Polish & Deploy):**
-- Tasks 10-18: UI improvements, testing, and deployment preparation
+
+- Tasks 11-19: UI improvements, testing, and deployment preparation
+
+## Technical Specifications
+
+### JSON Data Structure for Folder Persistence
+
+```json
+{
+  "version": "1.0.0",
+  "projectInfo": {
+    "name": "Project Name",
+    "created": "2024-01-01T12:00:00.000Z",
+    "lastModified": "2024-01-01T12:00:00.000Z",
+    "folderPath": "/absolute/path/to/photos",
+    "totalFiles": 150,
+    "lastScan": "2024-01-01T12:00:00.000Z"
+  },
+  "files": {
+    "photo001.jpg": {
+      "path": "/absolute/path/to/photos/photo001.jpg",
+      "relativePath": "photo001.jpg",
+      "size": 2048576,
+      "lastModified": "2024-01-01T10:30:00.000Z",
+      "checksum": "sha256:abc123...",
+      "exifData": {
+        "artist": "John Doe",
+        "copyright": "Company Name",
+        "dateTime": "2024-01-01T10:30:00.000Z",
+        "camera": "Canon EOS R5",
+        "employeeName": "John Doe",
+        "employeeId": "EMP001",
+        "allFields": {
+          "Make": "Canon",
+          "Model": "EOS R5",
+          "DateTime": "2024:01:01 10:30:00",
+          "Artist": "John Doe",
+          "Copyright": "Company Name"
+        }
+      },
+      "processingStatus": {
+        "renamed": false,
+        "emailSent": false,
+        "selected": true,
+        "exported": false
+      }
+    }
+  },
+  "employees": {
+    "John Doe": {
+      "name": "John Doe",
+      "id": "EMP001",
+      "email": "john.doe@company.com",
+      "photoCount": 5,
+      "photos": ["photo001.jpg", "photo002.jpg"],
+      "lastEmailSent": null,
+      "processingComplete": false
+    }
+  },
+  "settings": {
+    "apiEndpoint": "https://api.company.com/employees",
+    "emailConfig": {
+      "smtp": "smtp.company.com",
+      "port": 587,
+      "secure": true
+    },
+    "namingConvention": "employee_{employeeName}_{index:03d}",
+    "exportFormats": ["original", "web_optimized"]
+  }
+}
+```
+
+### File Naming Conventions
+
+- **Project Files**: `{project-name}.hpt` (Headshot Processing Tool format)
+- **Cache Files**: `.hpt-cache/{folder-hash}.json`
+- **Backup Files**: `.hpt-backup/{timestamp}-{project-name}.hpt.bak`
+- **Export Files**: `{employee-name}_{sequential-number:03d}.{extension}`
+
+### Data Persistence Strategy
+
+1. **Primary Storage**: JSON files for human-readable project data
+2. **Cache Strategy**: Separate cache files for performance optimization
+3. **Backup System**: Automatic backups before major operations
+4. **Incremental Updates**: File system watching for real-time synchronization
+5. **Data Validation**: Schema validation on load with automatic repair
+6. **Migration Support**: Version-aware data structure updates
 
 ## Setup Instructions
+
 ### Installing Tailwind with Vite
 
 Install Tailwind CSS
@@ -254,13 +418,15 @@ npm install tailwindcss @tailwindcss/vite
 Add the @tailwindcss/vite plugin to your Vite configuration.
 
 vite.config.ts
+
 ```typescript
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import tailwindcss from '@tailwindcss/vite'
+
 export default defineConfig({
-plugins: [
-tailwindcss(),
-],
+    plugins: [
+        tailwindcss(),
+    ],
 })
 ```
 
