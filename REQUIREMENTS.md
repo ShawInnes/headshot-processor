@@ -2,19 +2,6 @@
 
 This tool is to help process full of headshot's that have been taken.
 
-## Features
-
-1. allow the user to select a folder containing the photos
-2. once the folder has been selected innumerate all of the JPEG files in that folder and add them to a list to display
-   to the user
-3. Include the mediator from the EXIF data within the JPEG files
-4. Add a feature to rename all of the files based on the meta data within each file
-5. There will be a field within the matter data containing the employee name. You need to select all photos pertaining
-   to that particular employee and export them as employee_00 one employee_002 etc.
-6. The files have been renamed. There needs to be a feature that will look up an API end point based on the employee
-   name and obtain the email address
-7. Once the email address has been obtained for that employee we need to email them their headshot photos.
-
 ## Technology Requirements
 
 1. Use React
@@ -22,6 +9,11 @@ This tool is to help process full of headshot's that have been taken.
 3. Use Electron for cross-platform desktop capability
 
 Based on your requirements, here's a comprehensive task breakdown for building the headshot photo processing tool:
+
+## Principles
+
+1. Keep it simple, don't create more changes than required.
+
 
 ## Project Setup Tasks
 
