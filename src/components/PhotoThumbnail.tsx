@@ -8,6 +8,8 @@ interface PhotoThumbnailProps {
     size?: 'sm' | 'md' | 'lg'
     lazyLoad?: boolean
     loadingBuffer?: string
+    isSelected?: boolean
+    onToggleSelect?: (e: React.MouseEvent) => void
 }
 
 export function PhotoThumbnail({
@@ -15,7 +17,9 @@ export function PhotoThumbnail({
                                    onClick,
                                    size = 'sm',
                                    lazyLoad = true,
-                                   loadingBuffer = '50px'
+                                   loadingBuffer = '50px',
+                                   isSelected = false,
+                                   onToggleSelect
                                }: PhotoThumbnailProps) {
     const [isIntersecting, setIsIntersecting] = useState(!lazyLoad)
     const elementRef = useRef<HTMLDivElement>(null)
@@ -62,10 +66,17 @@ export function PhotoThumbnail({
         retry()
     }
 
+    const handleToggleSelect = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        onToggleSelect?.(e)
+    }
+
     return (
         <div
             ref={elementRef}
-            className={`${sizeClasses[size]} bg-gray-200 rounded cursor-pointer hover:bg-gray-300 transition-colors flex items-center justify-center group relative overflow-hidden`}
+            className={`${sizeClasses[size]} bg-gray-200 rounded cursor-pointer hover:bg-gray-300 transition-colors flex items-center justify-center group relative overflow-hidden ${
+                isSelected ? 'ring-2 ring-blue-500 ring-offset-1' : ''
+            }`}
             onClick={onClick}
             title={photo.name}
         >
@@ -93,6 +104,26 @@ export function PhotoThumbnail({
             ) : (
                 <div className="text-xs text-gray-600 text-center p-1 break-words">
                     {photo.name.split('.')[0].substring(0, 8)}
+                </div>
+            )}
+
+            {/* Selection checkbox */}
+            {onToggleSelect && (
+                <div className="absolute top-1 right-1 z-10">
+                    <div
+                        className={`w-4 h-4 rounded border-2 flex items-center justify-center cursor-pointer transition-colors ${
+                            isSelected
+                                ? 'bg-blue-500 border-blue-500'
+                                : 'bg-white border-gray-300 hover:border-gray-400'
+                        }`}
+                        onClick={handleToggleSelect}
+                    >
+                        {isSelected && (
+                            <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                        )}
+                    </div>
                 </div>
             )}
 

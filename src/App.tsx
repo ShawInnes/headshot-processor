@@ -7,7 +7,7 @@ import {Button} from './components/ui/button'
 import {PhotoFile} from './types/electron'
 import {PhotoWithExif} from './lib/exif'
 import {EmployeeService} from './lib/employeeService'
-import {Employee, EmployeeGroup} from './types/employee'
+import {EmployeeGroup} from './types/employee'
 import {toast} from 'sonner'
 import './App.css'
 
@@ -65,37 +65,6 @@ function App() {
     const handlePhotoSelect = (photo: PhotoWithExif) => {
         setSelectedPhoto(photo)
         setIsPhotoDialogOpen(true)
-    }
-
-    const handleEmployeeRename = (employee: Employee, newName: string) => {
-        if (!employeeGroup) return
-
-        const updatedEmployees = employeeGroup.employees.map(emp =>
-            emp.id === employee.id
-                ? {...emp, name: newName, id: EmployeeService.generateEmployeeId(newName)}
-                : emp
-        )
-
-        const updatedPhotos = photosWithExif.map(photo => {
-            if (photo.exif?.employeeName === employee.name) {
-                return {
-                    ...photo,
-                    exif: {
-                        ...photo.exif,
-                        employeeName: newName
-                    }
-                }
-            }
-            return photo
-        })
-
-        setPhotosWithExif(updatedPhotos)
-        setEmployeeGroup({
-            ...employeeGroup,
-            employees: updatedEmployees
-        })
-
-        toast.success(`Employee renamed to ${newName}`)
     }
 
     return (
@@ -178,7 +147,6 @@ function App() {
                                 <EmployeeGroupView
                                     employeeGroup={employeeGroup}
                                     onPhotoSelect={handlePhotoSelect}
-                                    onEmployeeRename={handleEmployeeRename}
                                 />
                             )
                         )}

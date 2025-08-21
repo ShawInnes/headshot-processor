@@ -1,4 +1,4 @@
-import { EmployeeGroup, Employee } from '../types/employee'
+import { EmployeeGroup} from '../types/employee'
 import { PhotoWithExif } from '../lib/exif'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card'
 import { EmployeeCard } from './EmployeeCard'
@@ -7,10 +7,9 @@ import { UnknownPhotosCard } from './UnknownPhotosCard'
 interface EmployeeGroupViewProps {
   employeeGroup: EmployeeGroup
   onPhotoSelect: (photo: PhotoWithExif) => void
-  onEmployeeRename?: (employee: Employee, newName: string) => void
 }
 
-export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onEmployeeRename }: EmployeeGroupViewProps) {
+export function EmployeeGroupView({ employeeGroup, onPhotoSelect }: EmployeeGroupViewProps) {
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
@@ -51,7 +50,6 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onEmployeeRena
           key={employee.id}
           employee={employee}
           onPhotoSelect={onPhotoSelect}
-          onRename={onEmployeeRename}
         />
       ))}
       

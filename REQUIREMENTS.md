@@ -68,6 +68,7 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 - [x] Implement lazy loading with intersection observer for performance
 - [x] Add retry functionality for failed image loads
 - [x] Create employee grouping view and statistics display
+- [x] Remove export button from employee group component (simplified UI)
 - [ ] Add photo selection/deselection functionality
 - [ ] Add search and filter capabilities by employee name
 
