@@ -124,9 +124,7 @@ ipcMain.handle('discover-photos', async (_, folderPath: string) => {
         console.error('Error discovering photos:', error)
         throw error
     }
-})
-
-ipcMain.handle('read-file-buffer', async (_, filePath: string) => {
+})ipcMain.handle('read-file-buffer', async (_, filePath: string) => {
     try {
         const buffer = await fs.readFile(filePath)
         return buffer
@@ -134,4 +132,22 @@ ipcMain.handle('read-file-buffer', async (_, filePath: string) => {
         console.error(`Error reading file ${filePath}:`, error)
         throw error
     }
+})
+
+ipcMain.handle('file-exists', async (_, filePath: string) => {
+    try {
+        await fs.access(filePath)
+        return true
+    } catch {
+        return false
+    }
+})
+
+ipcMain.handle('read-json-file', async (_, filePath: string) => {
+    const content = await fs.readFile(filePath, 'utf-8')
+    return JSON.parse(content)
+})
+
+ipcMain.handle('write-json-file', async (_, filePath: string, data: any) => {
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8')
 })

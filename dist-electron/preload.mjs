@@ -23,5 +23,8 @@ electron.contextBridge.exposeInMainWorld("ipcRenderer", {
 electron.contextBridge.exposeInMainWorld("electronAPI", {
   selectFolder: () => electron.ipcRenderer.invoke("select-folder"),
   discoverPhotos: (folderPath) => electron.ipcRenderer.invoke("discover-photos", folderPath),
-  readFileBuffer: (filePath) => electron.ipcRenderer.invoke("read-file-buffer", filePath)
+  readFileBuffer: (filePath) => electron.ipcRenderer.invoke("read-file-buffer", filePath),
+  fileExists: (filePath) => electron.ipcRenderer.invoke("file-exists", filePath),
+  readJsonFile: (filePath) => electron.ipcRenderer.invoke("read-json-file", filePath),
+  writeJsonFile: (filePath, data) => electron.ipcRenderer.invoke("write-json-file", filePath, data)
 });
