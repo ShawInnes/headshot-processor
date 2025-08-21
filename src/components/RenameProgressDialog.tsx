@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from './ui/button'
 import { Progress } from './ui/progress'
 import { ScrollArea } from './ui/scroll-area'
-import { Badge } from './ui/badge'
 import { CheckCircle, XCircle, RefreshCw, FileText, Undo2 } from 'lucide-react'
 import { RenameOperation } from '../types/renaming'
 
@@ -127,15 +126,15 @@ export function RenameProgressDialog({
           {/* Results List */}
           {results.length > 0 && (
             <ScrollArea className="h-[300px] border rounded-lg p-4">
-              <div className="space-y-2 pr-2">
+              <div className="space-y-2">
                 {results.map((result, index) => (
                   <div 
                     key={index} 
-                    className={`flex items-center justify-between p-3 rounded text-sm ${
+                    className={`flex items-center justify-between p-2 rounded text-sm ${
                       result.success ? 'bg-green-50' : 'bg-red-50'
                     }`}
                   >
-                    <div className="flex-1 min-w-0 pr-3">
+                    <div className="flex-1 min-w-0">
                       <div className="font-mono text-xs truncate">
                         {result.originalName} → {result.newName}
                       </div>
@@ -145,7 +144,7 @@ export function RenameProgressDialog({
                         </div>
                       )}
                     </div>
-                    <div className="flex-shrink-0">
+                    <div className="ml-2">
                       {result.success ? (
                         <CheckCircle className="w-4 h-4 text-green-600" />
                       ) : (

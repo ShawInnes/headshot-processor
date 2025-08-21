@@ -15,6 +15,7 @@ export class FileRenamingService {
    */
   static generateRenamePreview(employeeGroup: EmployeeGroup, settings: NamingSettings = this.DEFAULT_SETTINGS): RenamePreview {
     const operations: RenameOperation[] = []
+    const alreadyRenamed: RenameOperation[] = []
     const affectedEmployees: string[] = []
 
     // Process each employee's photos
@@ -27,24 +28,32 @@ export class FileRenamingService {
         const newName = this.generateEmployeeFilename(employee.name, sequenceNumber, originalExtension, settings)
         const newPath = photo.path.replace(photo.name, newName)
 
-        operations.push({
+        const operation: RenameOperation = {
           originalPath: photo.path,
           newPath,
           originalName: photo.name,
           newName,
           employeeName: employee.name,
           sequenceNumber
-        })
+        }
+
+        // Check if file is already properly named
+        if (photo.name === newName) {
+          alreadyRenamed.push(operation)
+        } else {
+          operations.push(operation)
+        }
       })
     })
 
-    // Detect conflicts
+    // Detect conflicts only for files that need renaming
     const conflicts = this.detectNamingConflicts(operations)
 
     return {
       operations,
       conflicts,
-      totalFiles: operations.length,
+      alreadyRenamed,
+      totalFiles: operations.length + alreadyRenamed.length,
       affectedEmployees
     }
   }

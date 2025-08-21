@@ -63,10 +63,14 @@ export function RenamePreviewDialog({
 
         <div className="space-y-4">
           {/* Summary Stats */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-lg font-bold text-blue-600">{preview.totalFiles}</div>
-              <div className="text-sm text-blue-800">Files to Rename</div>
+              <div className="text-lg font-bold text-blue-600">{preview.operations.length}</div>
+              <div className="text-sm text-blue-800">To Rename</div>
+            </div>
+            <div className="text-center p-3 bg-gray-50 rounded-lg">
+              <div className="text-lg font-bold text-gray-600">{preview.alreadyRenamed.length}</div>
+              <div className="text-sm text-gray-800">Renamed</div>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <div className="text-lg font-bold text-green-600">{preview.affectedEmployees.length}</div>
@@ -78,7 +82,7 @@ export function RenamePreviewDialog({
             </div>
           </div>
 
-          {/* Conflicts Alert */}
+          {/* Status Alerts */}
           {preview.conflicts.length > 0 && (
             <Alert>
               <AlertTriangle className="h-4 w-4" />
@@ -87,9 +91,9 @@ export function RenamePreviewDialog({
               </AlertDescription>
             </Alert>
           )}
-
+          
           {/* Employee Groups */}
-          <ScrollArea className="h-[400px] border rounded-lg p-4">
+          <ScrollArea className="h-[200px] border rounded-lg p-4">
             <div className="space-y-6">
               {employeeGroup.employees.map((employee, employeeIndex) => (
                 <div key={employee.id} className="space-y-2">
@@ -101,28 +105,47 @@ export function RenamePreviewDialog({
                   
                   <div className="space-y-1 ml-6">
                     {employee.photos.map((photo, photoIndex) => {
-                      const operation = resolvedOperations.find(op => op.originalPath === photo.path)
+                      // Check if this photo needs renaming
+                      const renameOperation = resolvedOperations.find(op => op.originalPath === photo.path)
+                      // Check if this photo is already properly named
+                      const alreadyRenamedOperation = preview.alreadyRenamed.find(op => op.originalPath === photo.path)
+                      
+                      const operation = renameOperation || alreadyRenamedOperation
                       if (!operation) return null
 
                       const hasConflict = preview.conflicts.some(conflict => 
                         conflict.conflictingFiles.includes(operation.originalName)
                       )
+                      
+                      const isAlreadyRenamed = !!alreadyRenamedOperation
+                      const needsRename = !!renameOperation
 
                       return (
-                        <div key={photo.path} className="flex items-center justify-between py-1 px-2 bg-gray-50 rounded text-sm">
+                        <div key={photo.path} className={`flex items-center justify-between py-1 px-2 rounded text-sm ${
+                          isAlreadyRenamed ? 'bg-green-50' : 'bg-gray-50'
+                        }`}>
                           <div className="flex-1">
                             <div className="font-mono text-gray-600">{operation.originalName}</div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-400">→</span>
-                              <div className={`font-mono ${hasConflict ? 'text-orange-600' : 'text-green-600'}`}>
-                                {operation.newName}
+                            {needsRename ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-gray-400">→</span>
+                                <div className={`font-mono ${hasConflict ? 'text-orange-600' : 'text-green-600'}`}>
+                                  {operation.newName}
+                                </div>
+                                {hasConflict && (
+                                  <Badge variant="outline" className="text-xs">
+                                    Auto-resolved
+                                  </Badge>
+                                )}
                               </div>
-                              {hasConflict && (
-                                <Badge variant="outline" className="text-xs">
-                                  Auto-resolved
-                                </Badge>
-                              )}
-                            </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <CheckCircle className="w-3 h-3 text-green-600" />
+                                <span className="text-green-600 text-xs">
+                                  Already properly named
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )
@@ -136,19 +159,6 @@ export function RenamePreviewDialog({
               ))}
             </div>
           </ScrollArea>
-
-          {/* Naming Pattern Info */}
-          <div className="bg-gray-50 p-3 rounded-lg">
-            <div className="text-sm text-gray-600">
-              <strong>Naming Pattern:</strong> {namingSettings.pattern}
-            </div>
-            <div className="text-sm text-gray-600">
-              <strong>Case Handling:</strong> {namingSettings.caseHandling}
-            </div>
-            <div className="text-sm text-gray-600">
-              <strong>Special Characters:</strong> Replace with "{namingSettings.specialCharReplacement}"
-            </div>
-          </div>
         </div>
 
         <DialogFooter>
@@ -161,7 +171,10 @@ export function RenamePreviewDialog({
             disabled={resolvedOperations.length === 0}
           >
             <CheckCircle className="w-4 h-4 mr-2" />
-            Rename {resolvedOperations.length} Files
+            {resolvedOperations.length === 0 
+              ? 'No Files to Rename' 
+              : `Rename ${resolvedOperations.length} File${resolvedOperations.length === 1 ? '' : 's'}`
+            }
           </Button>
         </DialogFooter>
       </DialogContent>

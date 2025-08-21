@@ -12,6 +12,7 @@ export interface RenameOperation {
 export interface RenamePreview {
   operations: RenameOperation[]
   conflicts: RenameConflict[]
+  alreadyRenamed: RenameOperation[]
   totalFiles: number
   affectedEmployees: string[]
 }

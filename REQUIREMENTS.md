@@ -75,7 +75,6 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 - [x] Add comprehensive naming settings (case handling, padding, special chars)
 - [x] Integrate with folder caching system for persistent data
 - [x] Add rename progress dialog with real-time status updates
-
 - [ ] Implement metadata-based file renaming logic
 - [ ] Create employee-specific numbering system (employee_001, employee_002, etc.)
 - [ ] Add rename preview functionality
