@@ -188,3 +188,29 @@ ipcMain.handle('check-file-exists', async (_, filePath: string) => {
         return false
     }
 })
+
+ipcMain.handle('send-employee-email', async (_, emailData: {
+    to: string,
+    employeeName: string,
+    photoFiles: string[]
+}) => {
+    try {
+        // Stub function - simulate email sending
+        console.log(`Sending email to ${emailData.to} for employee ${emailData.employeeName}`)
+        console.log(`Attaching ${emailData.photoFiles.length} photos:`, emailData.photoFiles)
+        
+        // Simulate processing time
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        
+        // Return success with mock message ID
+        return { 
+            success: true, 
+            messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` 
+        }
+    } catch (error) {
+        return { 
+            success: false, 
+            error: error instanceof Error ? error.message : 'Unknown error' 
+        }
+    }
+})

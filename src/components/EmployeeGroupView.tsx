@@ -8,11 +8,13 @@ import { UnknownPhotosCard } from './UnknownPhotosCard'
 import { RenamePreviewDialog } from './RenamePreviewDialog'
 import { NamingSettingsDialog } from './NamingSettingsDialog'
 import { RenameProgressDialog } from './RenameProgressDialog'
+import { EmailEmployeeDialog } from './EmailEmployeeDialog'
 import { FileRenamingService } from '../lib/file-renaming'
 import { RenameOperation, NamingSettings } from '../types/renaming'
 import { FolderCacheService } from '../lib/folder-cache'
 import { FileText, Settings } from 'lucide-react'
 import { toast } from 'sonner'
+import { Employee } from '../types/employee'
 
 interface EmployeeGroupViewProps {
   employeeGroup: EmployeeGroup
@@ -24,9 +26,12 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
   const [showRenameDialog, setShowRenameDialog] = useState(false)
   const [showNamingSettings, setShowNamingSettings] = useState(false)
   const [showRenameProgress, setShowRenameProgress] = useState(false)
+  const [showEmailDialog, setShowEmailDialog] = useState(false)
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null)
   const [namingSettings, setNamingSettings] = useState<NamingSettings>(FileRenamingService.DEFAULT_SETTINGS)
   const [renameOperations, setRenameOperations] = useState<RenameOperation[]>([])
   const [renameHistory, setRenameHistory] = useState<RenameOperation[][]>([])
+  const [folderCache, setFolderCache] = useState<any>(null)
 
   // Calculate pending renames for each employee
   const employeePendingRenames = useMemo(() => {
@@ -61,6 +66,33 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
   const totalPendingRenames = useMemo(() => {
     return Array.from(employeePendingRenames.values()).reduce((sum, count) => sum + count, 0)
   }, [employeePendingRenames])
+
+  // Load email status from cache
+  const employeeEmailStatus = useMemo(() => {
+    const statusMap = new Map<string, boolean>()
+    
+    employeeGroup.employees.forEach(employee => {
+      const isEmailed = FolderCacheService.isEmployeeEmailed(folderCache, employee.id)
+      statusMap.set(employee.id, isEmailed)
+    })
+    
+    return statusMap
+  }, [employeeGroup, folderCache])
+
+  // Load cache when component mounts or folder changes
+  useMemo(async () => {
+    if (employeeGroup.employees.length > 0) {
+      const folderPath = employeeGroup.employees[0].photos[0]?.directory
+      if (folderPath) {
+        try {
+          const cache = await FolderCacheService.loadCache(folderPath)
+          setFolderCache(cache)
+        } catch (error) {
+          console.error('Failed to load cache for email status:', error)
+        }
+      }
+    }
+  }, [employeeGroup])
 
   const handleRenameConfirm = async (operations: RenameOperation[]) => {
     setRenameOperations(operations)
@@ -150,6 +182,40 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
     }
   }
 
+  const handleEmailEmployee = (employee: Employee) => {
+    setSelectedEmployee(employee)
+    setShowEmailDialog(true)
+  }
+
+  const handleSendEmail = async (employee: Employee, emailAddress: string): Promise<void> => {
+    try {
+      // Call the electron email stub function
+      const result = await window.electronAPI.sendEmployeeEmail({
+        to: emailAddress,
+        employeeName: employee.name,
+        photoFiles: employee.photos.map(photo => photo.path)
+      })
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send email')
+      }
+      
+      // Mark employee as emailed in cache
+      const folderPath = employee.photos[0]?.directory
+      if (folderPath) {
+        await FolderCacheService.markEmployeeAsEmailed(folderPath, employee.id)
+        
+        // Reload cache to update UI
+        const updatedCache = await FolderCacheService.loadCache(folderPath)
+        setFolderCache(updatedCache)
+      }
+      
+      console.log(`Email sent successfully to ${emailAddress} for employee ${employee.name} with message ID: ${result.messageId}`)
+    } catch (error) {
+      throw new Error('Failed to send email: ' + (error instanceof Error ? error.message : 'Unknown error'))
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
@@ -221,6 +287,8 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
       {/* Employee Groups */}
       {employeeGroup.employees.map(employee => {
         const pendingRenames = employeePendingRenames.get(employee.id) || 0
+        const isEmailed = employeeEmailStatus.get(employee.id) || false
+        const canEmail = pendingRenames === 0 && !isEmailed
         
         return (
           <EmployeeCard 
@@ -228,6 +296,9 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
             employee={employee}
             onPhotoSelect={onPhotoSelect}
             pendingRenames={pendingRenames}
+            isEmailed={isEmailed}
+            canEmail={canEmail}
+            onEmailEmployee={canEmail ? handleEmailEmployee : undefined}
           />
         )
       })}
@@ -259,6 +330,13 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
         operations={renameOperations}
         onStartRename={handleStartRename}
         onUndo={renameHistory.length > 0 ? handleUndo : undefined}
+      />
+      
+      <EmailEmployeeDialog
+        open={showEmailDialog}
+        onOpenChange={setShowEmailDialog}
+        employee={selectedEmployee!}
+        onSendEmail={handleSendEmail}
       />
     </div>
   )

@@ -8,6 +8,8 @@ export interface IElectronAPI {
   renameFile: (oldPath: string, newPath: string) => Promise<{ success: boolean; error?: string }>
   batchRenameFiles: (operations: any[]) => Promise<any[]>
   checkFileExists: (filePath: string) => Promise<boolean>
+  sendEmployeeEmail: (emailData: { to: string, employeeName: string, photoFiles: string[] }) => 
+    Promise<{ success: boolean; messageId?: string; error?: string }>
 }
 
 export interface PhotoFile {

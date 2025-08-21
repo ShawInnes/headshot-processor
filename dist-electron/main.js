@@ -6881,6 +6881,22 @@ ipcMain.handle("check-file-exists", async (_, filePath) => {
     return false;
   }
 });
+ipcMain.handle("send-employee-email", async (_, emailData) => {
+  try {
+    console.log(`Sending email to ${emailData.to} for employee ${emailData.employeeName}`);
+    console.log(`Attaching ${emailData.photoFiles.length} photos:`, emailData.photoFiles);
+    await new Promise((resolve) => setTimeout(resolve, 1e3));
+    return {
+      success: true,
+      messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
+});
 export {
   MAIN_DIST,
   RENDERER_DIST,

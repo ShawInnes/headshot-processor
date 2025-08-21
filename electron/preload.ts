@@ -26,11 +26,12 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 contextBridge.exposeInMainWorld('electronAPI', {
   selectFolder: () => ipcRenderer.invoke('select-folder'),
   discoverPhotos: (folderPath: string) => ipcRenderer.invoke('discover-photos', folderPath),
-  readFileBuffer: (filePath: string) => ipcRenderer.invoke('read-file-buffer', filePath),
-  fileExists: (filePath: string) => ipcRenderer.invoke('file-exists', filePath),
+  readFileBuffer: (filePath: string) => ipcRenderer.invoke('read-file-buffer', filePath),fileExists: (filePath: string) => ipcRenderer.invoke('file-exists', filePath),
   readJsonFile: (filePath: string) => ipcRenderer.invoke('read-json-file', filePath),
   writeJsonFile: (filePath: string, data: any) => ipcRenderer.invoke('write-json-file', filePath, data),
   renameFile: (oldPath: string, newPath: string) => ipcRenderer.invoke('rename-file', oldPath, newPath),
   batchRenameFiles: (operations: any[]) => ipcRenderer.invoke('batch-rename-files', operations),
-  checkFileExists: (filePath: string) => ipcRenderer.invoke('check-file-exists', filePath)
+  checkFileExists: (filePath: string) => ipcRenderer.invoke('check-file-exists', filePath),
+  sendEmployeeEmail: (emailData: { to: string, employeeName: string, photoFiles: string[] }) => 
+    ipcRenderer.invoke('send-employee-email', emailData)
 })

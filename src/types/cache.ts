@@ -24,6 +24,7 @@ export interface FolderCache {
       photoFiles: string[] // Array of filenames
       firstSeen: string
       lastSeen: string
+      emailSent?: boolean // Simple flag for email status
     }
   }
   unknownPhotos: string[] // Array of filenames

@@ -68,4 +68,18 @@ export class FolderCacheService {
       unknownPhotos: []
     }
   }
+
+  static async markEmployeeAsEmailed(folderPath: string, employeeId: string): Promise<void> {
+    const cache = await this.loadCache(folderPath)
+    if (!cache || !cache.employees[employeeId]) return
+    
+    cache.employees[employeeId].emailSent = true
+    cache.lastScan = new Date().toISOString()
+    
+    await this.saveCache(folderPath, cache)
+  }
+
+  static isEmployeeEmailed(cache: FolderCache | null, employeeId: string): boolean {
+    return cache?.employees[employeeId]?.emailSent === true
+  }
 }

@@ -17,6 +17,8 @@ interface EmployeeCardProps {
     onDeselectAll?: (employee: Employee) => void
     onEmailEmployee?: (employee: Employee) => void
     pendingRenames?: number
+    isEmailed?: boolean
+    canEmail?: boolean
 }
 
 export function EmployeeCard({
@@ -27,7 +29,9 @@ export function EmployeeCard({
                                  onSelectAll,
                                  onDeselectAll,
                                  onEmailEmployee,
-                                 pendingRenames = 0
+                                 pendingRenames = 0,
+                                 isEmailed = false,
+                                 canEmail = false
                              }: EmployeeCardProps) {
     const selectedCount = employee.photos.filter(photo => selectedPhotos.has(photo.path)).length
     const allSelected = selectedCount === employee.photos.length
@@ -42,13 +46,7 @@ export function EmployeeCard({
 
     
 
-    const handleEmail = () => {
-        if (selectedCount === 0) {
-            toast.warning('Please select photos to email')
-            return
-        }
-        onEmailEmployee?.(employee)
-    }
+    
 
     return (
         <Card>
@@ -61,10 +59,22 @@ export function EmployeeCard({
                         <div>
                             <div className="flex items-center gap-2">
                                 <CardTitle>{employee.name}</CardTitle>
+                                {isEmailed && (
+                                    <Badge className="bg-green-50 border-green-200 text-green-700">
+                                        <Mail className="w-3 h-3 mr-1" />
+                                        Emailed
+                                    </Badge>
+                                )}
                                 {pendingRenames > 0 && (
                                     <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700">
                                         <FileText className="w-3 h-3 mr-1" />
                                         {pendingRenames} to rename
+                                    </Badge>
+                                )}
+                                {canEmail && (
+                                    <Badge className="bg-blue-50 border-blue-200 text-blue-700">
+                                        <Mail className="w-3 h-3 mr-1" />
+                                        Ready to Email
                                     </Badge>
                                 )}
                             </div>
@@ -95,10 +105,16 @@ export function EmployeeCard({
                             <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={handleEmail}
-                                title="Email employee photos"
+                                onClick={() => onEmailEmployee(employee)}
+                                disabled={!canEmail}
+                                title={
+                                    isEmailed ? "Already emailed" :
+                                    pendingRenames > 0 ? "Rename files first" :
+                                    "Email all photos to employee"
+                                }
                             >
                                 <Mail className="w-4 h-4"/>
+                                {isEmailed ? "Emailed" : "Email"}
                             </Button>
                         )}
                     </div>

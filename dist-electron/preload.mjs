@@ -29,5 +29,6 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   writeJsonFile: (filePath, data) => electron.ipcRenderer.invoke("write-json-file", filePath, data),
   renameFile: (oldPath, newPath) => electron.ipcRenderer.invoke("rename-file", oldPath, newPath),
   batchRenameFiles: (operations) => electron.ipcRenderer.invoke("batch-rename-files", operations),
-  checkFileExists: (filePath) => electron.ipcRenderer.invoke("check-file-exists", filePath)
+  checkFileExists: (filePath) => electron.ipcRenderer.invoke("check-file-exists", filePath),
+  sendEmployeeEmail: (emailData) => electron.ipcRenderer.invoke("send-employee-email", emailData)
 });
