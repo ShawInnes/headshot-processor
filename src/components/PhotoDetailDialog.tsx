@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react'
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} from './ui/dialog'
 import {Badge} from './ui/badge'
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from './ui/card'
 import {ScrollArea} from './ui/scroll-area'
 import {formatDate, formatFileSize, PhotoWithExif} from '../lib/exif'
+import {useImageLoader} from '../hooks/useImageLoader'
 import {AlertCircle, Camera, FileText, Image, User} from 'lucide-react'
 
 interface PhotoDetailDialogProps {
@@ -12,20 +12,13 @@ interface PhotoDetailDialogProps {
     onOpenChange: (open: boolean) => void
 }
 
-export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialogProps) {
-    const [imageUrl, setImageUrl] = useState<string | null>(null)
-    const [imageError, setImageError] = useState(false)
 
-    useEffect(() => {
-        if (photo && open) {
-            // Create a file URL for the image preview
-            setImageUrl(`file://${photo.path}`)
-            setImageError(false)
-        } else {
-            setImageUrl(null)
-            setImageError(false)
-        }
-    }, [photo, open])
+export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialogProps) {
+    const {imageUrl, isLoading: imageLoading, hasError: imageError} = useImageLoader({
+        photo,
+        enabled: open,
+        onError: (error) => console.error('Detail image load error:', error)
+    })
 
     if (!photo) return null
 
@@ -48,7 +41,8 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 min-h-0   overflow-x-auto">
+
+                <div className="flex-1 min-h-0 overflow-x-auto">
                     <ScrollArea className="h-full">
                         <div className="p-6 pt-4 space-y-6">
                             {/* Image Preview */}
@@ -57,15 +51,24 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                     <CardTitle className="text-base">Preview</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    {imageUrl && !imageError ? (
+                                    {imageLoading ? (
+                                        <div
+                                            className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                                            <div className="text-center text-gray-500">
+                                                <div
+                                                    className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500 mx-auto mb-2"></div>
+                                                <p className="text-sm">Loading image...</p>
+                                            </div>
+                                        </div>
+                                    ) : imageUrl && !imageError ? (
                                         <img
                                             src={imageUrl}
                                             alt={photo.name}
                                             className="w-full h-auto max-h-64 object-contain rounded-lg border"
-                                            onError={() => setImageError(true)}
                                         />
                                     ) : (
-                                        <div className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                                        <div
+                                            className="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center">
                                             <div className="text-center text-gray-500">
                                                 <AlertCircle className="w-8 h-8 mx-auto mb-2"/>
                                                 <p className="text-sm">Unable to load preview</p>
@@ -74,6 +77,7 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                     )}
                                 </CardContent>
                             </Card>
+                            
                             {/* File Information */}
                             <Card>
                                 <CardHeader>
@@ -97,7 +101,7 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                         <span className="font-medium text-gray-600">Path:</span>
                                         <p className="text-xs text-gray-500 break-all">{photo.path}</p>
                                     </div>
-                                            <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2">
                                         <span className="font-medium text-gray-600">Status:</span>
                                         {photo.hasError ? (
                                             <Badge variant="destructive">Error</Badge>
@@ -105,10 +109,11 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                             <Badge variant="default">EXIF Available</Badge>
                                         ) : (
                                             <Badge variant="secondary">No EXIF Data</Badge>
-                        )}
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>
+
                             {/* EXIF Data Section */}
                             {photo.hasError ? (
                                 <Card className="border-red-200">
@@ -139,12 +144,13 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                                 </div>
                                             ) : (
                                                 <p className="text-orange-600 text-sm flex items-center gap-2">
-                                        <AlertCircle className="w-4 h-4"/>
+                                                    <AlertCircle className="w-4 h-4"/>
                                                     No employee name found in metadata
                                                 </p>
                                             )}
                                         </CardContent>
                                     </Card>
+
                                     {/* Camera Information */}
                                     <Card>
                                         <CardHeader>
@@ -159,13 +165,13 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                                     <div>
                                                         <span className="font-medium text-gray-600">Make:</span>
                                                         <span className="ml-2">{exif.make}</span>
-                    </div>
+                                                    </div>
                                                 )}
                                                 {exif.model && (
                                                     <div>
                                                         <span className="font-medium text-gray-600">Model:</span>
                                                         <span className="ml-2">{exif.model}</span>
-                </div>
+                                                    </div>
                                                 )}
                                                 {exif.software && (
                                                     <div>
@@ -195,7 +201,8 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                             {(exif.imageWidth && exif.imageHeight) && (
                                                 <div>
                                                     <span className="font-medium text-gray-600">Dimensions:</span>
-                                                    <span className="ml-2">{exif.imageWidth} × {exif.imageHeight} pixels</span>
+                                                    <span
+                                                        className="ml-2">{exif.imageWidth} × {exif.imageHeight} pixels</span>
                                                 </div>
                                             )}
                                             {exif.orientation && (
@@ -207,7 +214,8 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                             {(exif.xResolution && exif.yResolution) && (
                                                 <div>
                                                     <span className="font-medium text-gray-600">Resolution:</span>
-                                                    <span className="ml-2">{exif.xResolution} × {exif.yResolution} DPI</span>
+                                                    <span
+                                                        className="ml-2">{exif.xResolution} × {exif.yResolution} DPI</span>
                                                 </div>
                                             )}
                                         </CardContent>

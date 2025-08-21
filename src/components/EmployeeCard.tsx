@@ -144,6 +144,7 @@ export function EmployeeCard({
             <PhotoThumbnail
               key={photo.path}
               photo={photo}
+              size={'md'}
               onClick={() => onPhotoSelect(photo)}
             />
           ))}
