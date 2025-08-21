@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 interface EmailEmployeeDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  employee: Employee
+  employee: Employee | null
   onSendEmail: (employee: Employee, emailAddress: string) => Promise<void>
 }
 
@@ -24,7 +24,17 @@ export function EmailEmployeeDialog({
   const [emailAddress, setEmailAddress] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  // Guard against null/undefined employee
+  if (!employee) {
+    return null
+  }
+
   const handleSend = async () => {
+    if (!employee) {
+      toast.error('No employee selected')
+      return
+    }
+    
     if (!emailAddress.trim()) {
       toast.error('Please enter an email address')
       return
