@@ -77,7 +77,7 @@ export function PhotoDetailDialog({photo, open, onOpenChange}: PhotoDetailDialog
                                     )}
                                 </CardContent>
                             </Card>
-                            
+
                             {/* File Information */}
                             <Card>
                                 <CardHeader>
