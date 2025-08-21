@@ -1,4 +1,5 @@
 import { ipcRenderer, contextBridge } from 'electron'
+import {RenameOperation} from "@/types/renaming.ts";
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -28,9 +29,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   discoverPhotos: (folderPath: string) => ipcRenderer.invoke('discover-photos', folderPath),
   readFileBuffer: (filePath: string) => ipcRenderer.invoke('read-file-buffer', filePath),fileExists: (filePath: string) => ipcRenderer.invoke('file-exists', filePath),
   readJsonFile: (filePath: string) => ipcRenderer.invoke('read-json-file', filePath),
-  writeJsonFile: (filePath: string, data: any) => ipcRenderer.invoke('write-json-file', filePath, data),
+  writeJsonFile: (filePath: string, data: object) => ipcRenderer.invoke('write-json-file', filePath, data),
   renameFile: (oldPath: string, newPath: string) => ipcRenderer.invoke('rename-file', oldPath, newPath),
-  batchRenameFiles: (operations: any[]) => ipcRenderer.invoke('batch-rename-files', operations),
+  batchRenameFiles: (operations: RenameOperation[]) => ipcRenderer.invoke('batch-rename-files', operations),
   checkFileExists: (filePath: string) => ipcRenderer.invoke('check-file-exists', filePath),
   sendEmployeeEmail: (emailData: { to: string, employeeName: string, photoFiles: string[] }) => 
     ipcRenderer.invoke('send-employee-email', emailData)

@@ -1,9 +1,9 @@
 // @see - https://www.electron.build/configuration/configuration
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "YourAppID",
+  "appId": "T1PhotoProcessor",
   "asar": true,
-  "productName": "YourAppName",
+  "productName": "T1 Photo Processor",
   "directories": {
     "output": "release/${version}"
   },

@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": "Shaw Innes",
+  "description": "A photo processor to automatically rename and email photos which have been tagged using SmartShooter5 barcodes.",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",

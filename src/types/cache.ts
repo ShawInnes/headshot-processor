@@ -10,7 +10,7 @@ export interface FolderCache {
       size: number
       modified: string
       checksum?: string
-      exifData: ExifData | null
+      exifData: ExifData | null | undefined
       hasError: boolean
       errorMessage?: string
       processed: string

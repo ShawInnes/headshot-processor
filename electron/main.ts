@@ -3,6 +3,7 @@ import {fileURLToPath} from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import {glob} from 'glob'
+import { RenameOperation } from '@/types/renaming'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -150,7 +151,7 @@ ipcMain.handle('read-json-file', async (_, filePath: string) => {
     return JSON.parse(content)
 })
 
-ipcMain.handle('write-json-file', async (_, filePath: string, data: any) => {
+ipcMain.handle('write-json-file', async (_, filePath: string, data: object) => {
     await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8')
 })
 
@@ -163,7 +164,7 @@ ipcMain.handle('rename-file', async (_, oldPath: string, newPath: string) => {
     }
 })
 
-ipcMain.handle('batch-rename-files', async (_, operations: any[]) => {
+ipcMain.handle('batch-rename-files', async (_, operations: RenameOperation[]) => {
     const results = []
     for (const op of operations) {
         try {

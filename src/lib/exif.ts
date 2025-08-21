@@ -13,7 +13,7 @@ export interface ExifData {
     yResolution?: number
     resolutionUnit?: number
 
-    [key: string]: any
+    [key: string]: unknown
 }
 
 export interface PhotoWithExif {

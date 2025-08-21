@@ -75,19 +75,19 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 - [x] Add comprehensive naming settings (case handling, padding, special chars)
 - [x] Integrate with folder caching system for persistent data
 - [x] Add rename progress dialog with real-time status updates
-- [ ] Implement metadata-based file renaming logic
-- [ ] Create employee-specific numbering system (employee_001, employee_002, etc.)
-- [ ] Add rename preview functionality
-- [ ] Implement batch rename operations
+- [x] Implement metadata-based file renaming logic
+- [x] Create employee-specific numbering system (employee_001, employee_002, etc.)
+- [x] Add rename preview functionality
+- [x] Implement batch rename operations
 - [ ] Handle file naming conflicts and duplicates
 
 ### 7. **Employee Management**
 
-- [ ] Create employee detection from EXIF metadata
-- [ ] Implement photo grouping by employee
-- [ ] Create employee selection interface
-- [ ] Add manual employee name correction/assignment
-- [ ] Export selected employee photos functionality
+- [x] Create employee detection from EXIF metadata
+- [x] Implement photo grouping by employee
+- [-] Create employee selection interface
+- [-] Add manual employee name correction/assignment
+- [x] Export selected employee photos functionality
 
 ### 8. **API Integration for Email Lookup**
 

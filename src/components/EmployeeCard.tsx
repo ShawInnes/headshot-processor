@@ -6,7 +6,6 @@ import {Badge} from './ui/badge'
 import {PhotoThumbnail} from './PhotoThumbnail'
 import {EmployeeService} from '../lib/employeeService'
 import {CheckSquare, Mail, Square, User, FileText} from 'lucide-react'
-import {toast} from 'sonner'
 
 interface EmployeeCardProps {
     employee: Employee

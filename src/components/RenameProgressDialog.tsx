@@ -23,7 +23,6 @@ export function RenameProgressDialog({
 }: RenameProgressDialogProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
-  const [currentIndex, setCurrentIndex] = useState(0)
   const [results, setResults] = useState<RenameOperation[]>([])
   const [progress, setProgress] = useState(0)
 
@@ -38,7 +37,6 @@ export function RenameProgressDialog({
       // Reset state when dialog closes
       setIsProcessing(false)
       setIsComplete(false)
-      setCurrentIndex(0)
       setResults([])
       setProgress(0)
     }

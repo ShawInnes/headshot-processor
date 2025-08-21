@@ -62,11 +62,11 @@ export class FileRenamingService {
    * Generate employee-specific filename
    */
   static generateEmployeeFilename(employeeName: string, sequenceNumber: number, originalExtension: string, settings: NamingSettings): string {
-    let cleanName = this.cleanEmployeeName(employeeName, settings)
-    let paddedNumber = sequenceNumber.toString().padStart(settings.numberPadding, '0')
+    const cleanName = this.cleanEmployeeName(employeeName, settings)
+    const paddedNumber = sequenceNumber.toString().padStart(settings.numberPadding, '0')
     
     // Replace pattern placeholders
-    let filename = settings.pattern
+    const filename = settings.pattern
       .replace('{employeeName}', cleanName)
       .replace(/{number:(\d+)}/g, (_, padding) => {
         const padLength = parseInt(padding) || settings.numberPadding
@@ -149,7 +149,6 @@ export class FileRenamingService {
    */
   static resolveConflicts(operations: RenameOperation[], conflicts: RenameConflict[]): RenameOperation[] {
     const resolved = [...operations]
-    const nameCount = new Map<string, number>()
 
     conflicts.forEach(conflict => {
       if (conflict.type === 'duplicate') {

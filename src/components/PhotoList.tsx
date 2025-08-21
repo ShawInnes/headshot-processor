@@ -23,9 +23,12 @@ export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListP
     const [isProcessing, setIsProcessing] = useState(false)
     const [progress, setProgress] = useState(0)
     const [error, setError] = useState<string | null>(null)
-  useEffect(() => {
+
+    useEffect(() => {
         if (photos.length > 0) {
-            processPhotosWithCaching()
+            if (processPhotosWithCaching) {
+                processPhotosWithCaching()
+            }
         }
     }, [photos])
 
@@ -37,21 +40,21 @@ export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListP
         setError(null)
 
         const processedPhotos: PhotoWithExif[] = []
-        
+
         try {
             // Load existing cache if available
             const folderPath = photos[0]?.directory || ''
             const existingCache = await FolderCacheService.loadCache(folderPath)
-            
+
             for (let i = 0; i < photos.length; i++) {
                 const photo = photos[i]
                 const cachedFile = existingCache?.files[photo.name]
-                
+
                 // Use cache if file hasn't changed
-                if (cachedFile && 
-                    cachedFile.size === photo.size && 
+                if (cachedFile &&
+                    cachedFile.size === photo.size &&
                     cachedFile.modified === photo.modified) {
-                    
+
                     const photoWithExif: PhotoWithExif = {
                         ...photo,
                         exif: cachedFile.exifData,
@@ -64,16 +67,16 @@ export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListP
                     const photoWithExif = await processPhotoFresh(photo)
                     processedPhotos.push(photoWithExif)
                 }
-                
+
                 setProgress(((i + 1) / photos.length) * 100)
             }
 
             setPhotosWithExif(processedPhotos)
             onPhotosProcessed?.(processedPhotos)
-            
+
             // Save to cache
             await saveCacheFromProcessedPhotos(folderPath, processedPhotos)
-            
+
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Unknown error processing photos')
         } finally {
@@ -124,7 +127,7 @@ export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListP
                 employees: {},
                 unknownPhotos: []
             }
-            
+
             // Convert processed photos to cache format
             processedPhotos.forEach(photo => {
                 cache.files[photo.name] = {
@@ -135,12 +138,12 @@ export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListP
                     errorMessage: photo.errorMessage,
                     processed: new Date().toISOString()
                 }
-                
+
                 if (!photo.exif?.employeeName) {
                     cache.unknownPhotos.push(photo.name)
                 }
             })
-            
+
             // Group employees
             const employeeGroup = EmployeeService.groupPhotosByEmployee(processedPhotos)
             employeeGroup.employees.forEach(employee => {
@@ -153,7 +156,7 @@ export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListP
                     lastSeen: employee.lastSeen.toISOString()
                 }
             })
-            
+
             await FolderCacheService.saveCache(folderPath, cache)
             console.log('Cache saved successfully')
         } catch (error) {
@@ -215,7 +218,7 @@ export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListP
                 </CardHeader>
                 <CardContent>
                     <p className="text-red-600 mb-4">{error}</p>
-                    <Button onClick={processPhotos} variant="outline">
+                    <Button onClick={processPhotosWithCaching} variant="outline">
                         <RefreshCw className="w-4 h-4 mr-2"/>
                         Retry
                     </Button>
