@@ -11,9 +11,10 @@ import {PhotoFile} from '@/types/electron'
 interface PhotoListProps {
     photos: PhotoFile[]
     onPhotoSelect?: (photo: PhotoWithExif) => void
+    onPhotosProcessed?: (photos: PhotoWithExif[]) => void
 }
 
-export function PhotoList({photos, onPhotoSelect}: PhotoListProps) {
+export function PhotoList({photos, onPhotoSelect, onPhotosProcessed}: PhotoListProps) {
     const [photosWithExif, setPhotosWithExif] = useState<PhotoWithExif[]>([])
     const [isProcessing, setIsProcessing] = useState(false)
     const [progress, setProgress] = useState(0)
@@ -72,6 +73,8 @@ export function PhotoList({photos, onPhotoSelect}: PhotoListProps) {
             }
 
             setPhotosWithExif(processedPhotos)
+
+            onPhotosProcessed?.(processedPhotos)
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Unknown error processing photos')
         } finally {
@@ -187,9 +190,6 @@ export function PhotoList({photos, onPhotoSelect}: PhotoListProps) {
             <Card>
                 <CardHeader>
                     <CardTitle>Photo Details</CardTitle>
-                    <CardDescription>
-                        Click on a photo to view more details
-                    </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="rounded-md border">
