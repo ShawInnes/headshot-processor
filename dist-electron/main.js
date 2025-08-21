@@ -6834,6 +6834,53 @@ ipcMain.handle("read-file-buffer", async (_, filePath) => {
     throw error;
   }
 });
+ipcMain.handle("file-exists", async (_, filePath) => {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+});
+ipcMain.handle("read-json-file", async (_, filePath) => {
+  const content = await fs.readFile(filePath, "utf-8");
+  return JSON.parse(content);
+});
+ipcMain.handle("write-json-file", async (_, filePath, data) => {
+  await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
+});
+ipcMain.handle("rename-file", async (_, oldPath, newPath) => {
+  try {
+    await fs.rename(oldPath, newPath);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+  }
+});
+ipcMain.handle("batch-rename-files", async (_, operations) => {
+  const results = [];
+  for (const op of operations) {
+    try {
+      await fs.rename(op.originalPath, op.newPath);
+      results.push({ ...op, success: true });
+    } catch (error) {
+      results.push({
+        ...op,
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  }
+  return results;
+});
+ipcMain.handle("check-file-exists", async (_, filePath) => {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+});
 export {
   MAIN_DIST,
   RENDERER_DIST,

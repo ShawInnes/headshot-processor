@@ -21,12 +21,16 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
 
   // You can expose other APTs you need here.
   // ...
-})// Expose specific APIs for the photo processing app
+})
+// Expose specific APIs for the photo processing app
 contextBridge.exposeInMainWorld('electronAPI', {
   selectFolder: () => ipcRenderer.invoke('select-folder'),
   discoverPhotos: (folderPath: string) => ipcRenderer.invoke('discover-photos', folderPath),
   readFileBuffer: (filePath: string) => ipcRenderer.invoke('read-file-buffer', filePath),
   fileExists: (filePath: string) => ipcRenderer.invoke('file-exists', filePath),
   readJsonFile: (filePath: string) => ipcRenderer.invoke('read-json-file', filePath),
-  writeJsonFile: (filePath: string, data: any) => ipcRenderer.invoke('write-json-file', filePath, data)
+  writeJsonFile: (filePath: string, data: any) => ipcRenderer.invoke('write-json-file', filePath, data),
+  renameFile: (oldPath: string, newPath: string) => ipcRenderer.invoke('rename-file', oldPath, newPath),
+  batchRenameFiles: (operations: any[]) => ipcRenderer.invoke('batch-rename-files', operations),
+  checkFileExists: (filePath: string) => ipcRenderer.invoke('check-file-exists', filePath)
 })

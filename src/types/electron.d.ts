@@ -5,6 +5,9 @@ export interface IElectronAPI {
   fileExists: (filePath: string) => Promise<boolean>
   readJsonFile: (filePath: string) => Promise<any>
   writeJsonFile: (filePath: string, data: any) => Promise<void>
+  renameFile: (oldPath: string, newPath: string) => Promise<{ success: boolean; error?: string }>
+  batchRenameFiles: (operations: any[]) => Promise<any[]>
+  checkFileExists: (filePath: string) => Promise<boolean>
 }
 
 export interface PhotoFile {

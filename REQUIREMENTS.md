@@ -62,16 +62,24 @@ Based on your requirements, here's a comprehensive task breakdown for building t
 - [x] Create employee grouping view and statistics display
 - [x] Remove export button from employee group component (simplified UI)
 - [x] Implement folder-based JSON caching system (headshots.json)
-- [ ] Add photo selection/deselection functionality
 - [ ] Add search and filter capabilities by employee name
 
-### 6. **File Renaming System**
+### 6. **File Renaming System** ✅ COMPLETED
+
+- [x] Implement metadata-based file renaming logic with FileRenamingService
+- [x] Create employee-specific numbering system (employee_001, employee_002, etc.)
+- [x] Add rename preview functionality with conflict detection
+- [x] Implement batch rename operations with progress tracking
+- [x] Add undo/rollback functionality for renames
+- [x] Handle file naming conflicts and duplicates with auto-resolution
+- [x] Add comprehensive naming settings (case handling, padding, special chars)
+- [x] Integrate with folder caching system for persistent data
+- [x] Add rename progress dialog with real-time status updates
 
 - [ ] Implement metadata-based file renaming logic
 - [ ] Create employee-specific numbering system (employee_001, employee_002, etc.)
 - [ ] Add rename preview functionality
 - [ ] Implement batch rename operations
-- [ ] Add undo/rollback functionality for renames
 - [ ] Handle file naming conflicts and duplicates
 
 ### 7. **Employee Management**
@@ -117,11 +125,6 @@ Based on your requirements, here's a comprehensive task breakdown for building t
     - [x] Human-readable JSON format for transparency
     - [x] No complex project management - one cache per folder
     - [x] Automatic cleanup when folders are deleted
-- [ ] **Data export/import capabilities**
-    - [ ] Export metadata to CSV/Excel for external processing
-    - [ ] Import employee data from external sources
-    - [ ] Backup/restore application data and settings
-    - [ ] Support for data migration between application versions
 
 ## User Interface Components
 

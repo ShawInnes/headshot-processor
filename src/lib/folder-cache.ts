@@ -1,12 +1,13 @@
 import { PhotoFile } from '../types/electron'
 import { FolderCache } from '../types/cache'
-import path from 'path'
 
 export class FolderCacheService {
   private static CACHE_FILENAME = 'headshots.json'
   
   static getCachePath(folderPath: string): string {
-    return path.join(folderPath, this.CACHE_FILENAME)
+    // Use simple string concatenation instead of path.join for browser compatibility
+    const separator = folderPath.includes('\\') ? '\\' : '/'
+    return folderPath + separator + this.CACHE_FILENAME
   }
   
   static async cacheExists(folderPath: string): Promise<boolean> {

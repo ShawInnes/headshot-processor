@@ -1,15 +1,15 @@
-import {useEffect, useState} from 'react'
-import {FolderSelector} from './components/FolderSelector'
-import {PhotoList} from './components/PhotoList'
-import {EmployeeGroupView} from './components/EmployeeGroupView'
-import {PhotoDetailDialog} from './components/PhotoDetailDialog'
-import {Button} from './components/ui/button'
-import {PhotoFile} from './types/electron'
-import {PhotoWithExif} from './lib/exif'
-import {EmployeeService} from './lib/employeeService'
-import {EmployeeGroup} from './types/employee'
-import {FolderCacheService} from './lib/folder-cache'
-import {toast} from 'sonner'
+import { useEffect, useState } from 'react'
+import { FolderSelector } from './components/FolderSelector'
+import { PhotoList } from './components/PhotoList'
+import { EmployeeGroupView } from './components/EmployeeGroupView'
+import { PhotoDetailDialog } from './components/PhotoDetailDialog'
+import { Button } from './components/ui/button'
+import { PhotoFile } from './types/electron'
+import { PhotoWithExif } from './lib/exif'
+import { EmployeeService } from './lib/employeeService'
+import { EmployeeGroup } from './types/employee'
+import { FolderCacheService } from './lib/folder-cache'
+import { toast } from 'sonner'
 import './App.css'
 
 type ViewMode = 'list' | 'groups'
@@ -22,7 +22,9 @@ function App() {
     const [isLoading, setIsLoading] = useState(false)
     const [selectedPhoto, setSelectedPhoto] = useState<PhotoWithExif | null>(null)
     const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false)
-    const [viewMode, setViewMode] = useState<ViewMode>('list')const handleFolderSelected = async (folderPath: string) => {
+    const [viewMode, setViewMode] = useState<ViewMode>('list')
+
+    const handleFolderSelected = async (folderPath: string) => {
         setIsLoading(true)
         setPhotos([])
         setPhotosWithExif([]) // Clear previous EXIF data
@@ -42,8 +44,8 @@ function App() {
 
             // Check if we have a cache and if it's up to date
             const cacheExists = await FolderCacheService.cacheExists(folderPath)
-            const needsUpdate = cacheExists ? 
-                await FolderCacheService.needsUpdate(folderPath, discoveredPhotos) : 
+            const needsUpdate = cacheExists ?
+                await FolderCacheService.needsUpdate(folderPath, discoveredPhotos) :
                 true
 
             if (cacheExists && !needsUpdate) {
@@ -61,13 +63,14 @@ function App() {
             toast.error('Failed to scan folder for photos')
         } finally {
             setIsLoading(false)
-        }}
+        }
+    }
 
     const loadFromCache = async (folderPath: string, currentFiles: PhotoFile[]) => {
         try {
             const cache = await FolderCacheService.loadCache(folderPath)
             if (!cache) return
-            
+
             // Convert cache back to current data structures
             const photosWithExif: PhotoWithExif[] = currentFiles.map(file => ({
                 ...file,
@@ -75,11 +78,11 @@ function App() {
                 hasError: cache.files[file.name]?.hasError || false,
                 errorMessage: cache.files[file.name]?.errorMessage
             }))
-            
+
             setPhotos(currentFiles)
             setPhotosWithExif(photosWithExif)
             setSelectedFolder(folderPath)
-            
+
             // Employee grouping will be handled by useEffect
         } catch (error) {
             console.error('Failed to load from cache:', error)
