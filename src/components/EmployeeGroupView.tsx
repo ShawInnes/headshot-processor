@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { EmployeeGroup} from '../types/employee'
 import { PhotoWithExif } from '../lib/exif'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card'
@@ -27,6 +27,40 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
   const [namingSettings, setNamingSettings] = useState<NamingSettings>(FileRenamingService.DEFAULT_SETTINGS)
   const [renameOperations, setRenameOperations] = useState<RenameOperation[]>([])
   const [renameHistory, setRenameHistory] = useState<RenameOperation[][]>([])
+
+  // Calculate pending renames for each employee
+  const employeePendingRenames = useMemo(() => {
+    const pendingMap = new Map<string, number>()
+    
+    employeeGroup.employees.forEach(employee => {
+      let pendingCount = 0
+      
+      employee.photos.forEach((photo, index) => {
+        const sequenceNumber = index + 1
+        const originalExtension = FileRenamingService.getFileExtension(photo.name)
+        const expectedName = FileRenamingService.generateEmployeeFilename(
+          employee.name, 
+          sequenceNumber, 
+          originalExtension, 
+          namingSettings
+        )
+        
+        // If current name doesn't match expected name, it needs renaming
+        if (photo.name !== expectedName) {
+          pendingCount++
+        }
+      })
+      
+      pendingMap.set(employee.id, pendingCount)
+    })
+    
+    return pendingMap
+  }, [employeeGroup, namingSettings])
+
+  // Calculate total pending renames across all employees
+  const totalPendingRenames = useMemo(() => {
+    return Array.from(employeePendingRenames.values()).reduce((sum, count) => sum + count, 0)
+  }, [employeePendingRenames])
 
   const handleRenameConfirm = async (operations: RenameOperation[]) => {
     setRenameOperations(operations)
@@ -148,15 +182,30 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
             </div>
           </div>
           
+          {/* Pending Renames Alert */}
+          {totalPendingRenames > 0 && (
+            <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+              <div className="flex items-center gap-2 text-orange-800">
+                <FileText className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  {totalPendingRenames} files need renaming to match employee naming convention
+                </span>
+              </div>
+            </div>
+          )}
+          
           {/* Rename Actions */}
           <div className="mt-6 flex gap-3 justify-center">
             <Button
               onClick={() => setShowRenameDialog(true)}
               disabled={employeeGroup.employees.length === 0}
-              className="bg-blue-600 hover:bg-blue-700"
+              className={`${totalPendingRenames > 0 ? 'bg-orange-600 hover:bg-orange-700' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
               <FileText className="w-4 h-4 mr-2" />
-              Rename Files by Employee
+              {totalPendingRenames > 0 
+                ? `Rename ${totalPendingRenames} Files` 
+                : 'Rename Files by Employee'
+              }
             </Button>
             <Button
               variant="outline"
@@ -170,13 +219,18 @@ export function EmployeeGroupView({ employeeGroup, onPhotoSelect, onFilesRenamed
       </Card>
 
       {/* Employee Groups */}
-      {employeeGroup.employees.map(employee => (
-        <EmployeeCard 
-          key={employee.id}
-          employee={employee}
-          onPhotoSelect={onPhotoSelect}
-        />
-      ))}
+      {employeeGroup.employees.map(employee => {
+        const pendingRenames = employeePendingRenames.get(employee.id) || 0
+        
+        return (
+          <EmployeeCard 
+            key={employee.id}
+            employee={employee}
+            onPhotoSelect={onPhotoSelect}
+            pendingRenames={pendingRenames}
+          />
+        )
+      })}
       
       {/* Unknown Photos */}
       <UnknownPhotosCard 

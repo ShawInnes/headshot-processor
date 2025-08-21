@@ -2,9 +2,10 @@ import {Employee} from '../types/employee'
 import {PhotoWithExif} from '../lib/exif'
 import {Card, CardContent, CardHeader, CardTitle} from './ui/card'
 import {Button} from './ui/button'
+import {Badge} from './ui/badge'
 import {PhotoThumbnail} from './PhotoThumbnail'
 import {EmployeeService} from '../lib/employeeService'
-import {CheckSquare, Mail, Square, User} from 'lucide-react'
+import {CheckSquare, Mail, Square, User, FileText} from 'lucide-react'
 import {toast} from 'sonner'
 
 interface EmployeeCardProps {
@@ -15,6 +16,7 @@ interface EmployeeCardProps {
     onSelectAll?: (employee: Employee) => void
     onDeselectAll?: (employee: Employee) => void
     onEmailEmployee?: (employee: Employee) => void
+    pendingRenames?: number
 }
 
 export function EmployeeCard({
@@ -24,7 +26,8 @@ export function EmployeeCard({
                                  onPhotoToggle,
                                  onSelectAll,
                                  onDeselectAll,
-                                 onEmailEmployee
+                                 onEmailEmployee,
+                                 pendingRenames = 0
                              }: EmployeeCardProps) {
     const selectedCount = employee.photos.filter(photo => selectedPhotos.has(photo.path)).length
     const allSelected = selectedCount === employee.photos.length
@@ -56,7 +59,15 @@ export function EmployeeCard({
                             <User className="w-5 h-5 text-blue-600"/>
                         </div>
                         <div>
-                            <CardTitle>{employee.name}</CardTitle>
+                            <div className="flex items-center gap-2">
+                                <CardTitle>{employee.name}</CardTitle>
+                                {pendingRenames > 0 && (
+                                    <Badge variant="outline" className="bg-orange-50 border-orange-200 text-orange-700">
+                                        <FileText className="w-3 h-3 mr-1" />
+                                        {pendingRenames} to rename
+                                    </Badge>
+                                )}
+                            </div>
                             <p className="text-sm text-gray-600">
                                 {employee.photoCount} photos
                                 • {EmployeeService.formatDateRange(employee.firstSeen, employee.lastSeen)}
