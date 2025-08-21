@@ -1,27 +1,27 @@
-import { useState, useEffect } from 'react'
-import { FolderSelector } from './components/FolderSelector'
-import { PhotoList } from './components/PhotoList'
-import { EmployeeGroupView } from './components/EmployeeGroupView'
-import { PhotoDetailDialog } from './components/PhotoDetailDialog'
-import { Button } from './components/ui/button'
-import { PhotoFile } from './types/electron'
-import { PhotoWithExif } from './lib/exif'
-import { EmployeeService } from './lib/employeeService'
-import { EmployeeGroup, Employee } from './types/employee'
-import { toast } from 'sonner'
+import {useEffect, useState} from 'react'
+import {FolderSelector} from './components/FolderSelector'
+import {PhotoList} from './components/PhotoList'
+import {EmployeeGroupView} from './components/EmployeeGroupView'
+import {PhotoDetailDialog} from './components/PhotoDetailDialog'
+import {Button} from './components/ui/button'
+import {PhotoFile} from './types/electron'
+import {PhotoWithExif} from './lib/exif'
+import {EmployeeService} from './lib/employeeService'
+import {Employee, EmployeeGroup} from './types/employee'
+import {toast} from 'sonner'
 import './App.css'
 
 type ViewMode = 'list' | 'groups'
 
 function App() {
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
-  const [photos, setPhotos] = useState<PhotoFile[]>([])
-  const [photosWithExif, setPhotosWithExif] = useState<PhotoWithExif[]>([])
-  const [employeeGroup, setEmployeeGroup] = useState<EmployeeGroup | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [selectedPhoto, setSelectedPhoto] = useState<PhotoWithExif | null>(null)
-  const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false)
-  const [viewMode, setViewMode] = useState<ViewMode>('list')
+    const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
+    const [photos, setPhotos] = useState<PhotoFile[]>([])
+    const [photosWithExif, setPhotosWithExif] = useState<PhotoWithExif[]>([])
+    const [employeeGroup, setEmployeeGroup] = useState<EmployeeGroup | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [selectedPhoto, setSelectedPhoto] = useState<PhotoWithExif | null>(null)
+    const [isPhotoDialogOpen, setIsPhotoDialogOpen] = useState(false)
+    const [viewMode, setViewMode] = useState<ViewMode>('list')
 
     const handleFolderSelected = async (folderPath: string) => {
         setIsLoading(true)
@@ -51,52 +51,52 @@ function App() {
         }
     }
 
-  useEffect(() => {
-    if (photosWithExif.length > 0) {
-      const groupedEmployees = EmployeeService.groupPhotosByEmployee(photosWithExif)
-      setEmployeeGroup(groupedEmployees)
-    }
-  }, [photosWithExif])
-
-  const handlePhotosProcessed = (processedPhotos: PhotoWithExif[]) => {
-    setPhotosWithExif(processedPhotos)
-  }
-
-  const handlePhotoSelect = (photo: PhotoWithExif) => {
-    setSelectedPhoto(photo)
-    setIsPhotoDialogOpen(true)
-  }
-
-  const handleEmployeeRename = (employee: Employee, newName: string) => {
-    if (!employeeGroup) return
-
-    const updatedEmployees = employeeGroup.employees.map(emp =>
-      emp.id === employee.id
-        ? { ...emp, name: newName, id: EmployeeService.generateEmployeeId(newName) }
-        : emp
-    )
-
-    const updatedPhotos = photosWithExif.map(photo => {
-      if (photo.exif?.employeeName === employee.name) {
-        return {
-          ...photo,
-          exif: {
-            ...photo.exif,
-            employeeName: newName
-          }
+    useEffect(() => {
+        if (photosWithExif.length > 0) {
+            const groupedEmployees = EmployeeService.groupPhotosByEmployee(photosWithExif)
+            setEmployeeGroup(groupedEmployees)
         }
-      }
-      return photo
-    })
+    }, [photosWithExif])
 
-    setPhotosWithExif(updatedPhotos)
-    setEmployeeGroup({
-      ...employeeGroup,
-      employees: updatedEmployees
-    })
+    const handlePhotosProcessed = (processedPhotos: PhotoWithExif[]) => {
+        setPhotosWithExif(processedPhotos)
+    }
 
-    toast.success(`Employee renamed to ${newName}`)
-  }
+    const handlePhotoSelect = (photo: PhotoWithExif) => {
+        setSelectedPhoto(photo)
+        setIsPhotoDialogOpen(true)
+    }
+
+    const handleEmployeeRename = (employee: Employee, newName: string) => {
+        if (!employeeGroup) return
+
+        const updatedEmployees = employeeGroup.employees.map(emp =>
+            emp.id === employee.id
+                ? {...emp, name: newName, id: EmployeeService.generateEmployeeId(newName)}
+                : emp
+        )
+
+        const updatedPhotos = photosWithExif.map(photo => {
+            if (photo.exif?.employeeName === employee.name) {
+                return {
+                    ...photo,
+                    exif: {
+                        ...photo.exif,
+                        employeeName: newName
+                    }
+                }
+            }
+            return photo
+        })
+
+        setPhotosWithExif(updatedPhotos)
+        setEmployeeGroup({
+            ...employeeGroup,
+            employees: updatedEmployees
+        })
+
+        toast.success(`Employee renamed to ${newName}`)
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
